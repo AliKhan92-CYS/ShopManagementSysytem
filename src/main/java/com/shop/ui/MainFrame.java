@@ -16,16 +16,19 @@ public class MainFrame extends JFrame {
         setSize(600, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new FlowLayout());
+        setLayout(new GridLayout(3, 1, 10, 10));
 
         JButton addBtn = new JButton("Add Product");
         JButton viewBtn = new JButton("View Products");
         JButton searchBtn = new JButton("Search Product");
 
-        add(addBtn);
-        add(viewBtn);
-        add(searchBtn);
+        JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
 
+        panel.add(addBtn);
+        panel.add(viewBtn);
+        panel.add(searchBtn);
+
+        add(panel);
         // ================= FIXED ACTIONS =================
 
         addBtn.addActionListener(e -> {

@@ -8,49 +8,84 @@ import java.awt.*;
 
 public class AddProductForm extends JFrame {
 
+    private JTextField nameField, priceField, qtyField, categoryField;
+
     public AddProductForm() {
 
         setTitle("Add Product");
-        setSize(300, 300);
+        setSize(400, 300);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(5, 2));
+        setLayout(new GridLayout(5, 2, 10, 10));
 
-        JTextField name = new JTextField();
-        JTextField price = new JTextField();
-        JTextField qty = new JTextField();
-        JTextField category = new JTextField();
+        // Fields
+        nameField = new JTextField();
+        priceField = new JTextField();
+        qtyField = new JTextField();
+        categoryField = new JTextField();
 
-        JButton save = new JButton("Save");
+        JButton addBtn = new JButton("Add Product");
 
-        add(new JLabel("Name"));
-        add(name);
+        // Layout
+        add(new JLabel("Name:"));
+        add(nameField);
 
-        add(new JLabel("Price"));
-        add(price);
+        add(new JLabel("Price:"));
+        add(priceField);
 
-        add(new JLabel("Quantity"));
-        add(qty);
+        add(new JLabel("Quantity:"));
+        add(qtyField);
 
-        add(new JLabel("Category"));
-        add(category);
+        add(new JLabel("Category:"));
+        add(categoryField);
 
-        add(save);
+        add(new JLabel());
+        add(addBtn);
 
-        save.addActionListener(e -> {
-
-            Product p = new Product(
-                    name.getText(),
-                    Double.parseDouble(price.getText()),
-                    Integer.parseInt(qty.getText()),
-                    category.getText()
-            );
-
-            ProductDAO.addProduct(p);
-
-            JOptionPane.showMessageDialog(this, "Product Added!");
-            dispose();
-        });
+        // Action
+        addBtn.addActionListener(e -> addProduct());
 
         setVisible(true);
+    }
+
+    private void addProduct() {
+
+        String name = nameField.getText().trim();
+        String priceText = priceField.getText().trim();
+        String qtyText = qtyField.getText().trim();
+        String category = categoryField.getText().trim();
+
+        // ✅ VALIDATION
+        if (name.isEmpty() || priceText.isEmpty() || qtyText.isEmpty() || category.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "All fields are required!");
+            return;
+        }
+
+        double price;
+        int qty;
+
+        try {
+            price = Double.parseDouble(priceText);
+            qty = Integer.parseInt(qtyText);
+
+            if (price < 0 || qty < 0) {
+                JOptionPane.showMessageDialog(this, "Price and Quantity must be positive!");
+                return;
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Invalid number format!");
+            return;
+        }
+
+        // Save
+        ProductDAO.addProduct(new Product(name, price, qty, category));
+
+        JOptionPane.showMessageDialog(this, "✔ Product Added Successfully");
+
+        // Clear fields
+        nameField.setText("");
+        priceField.setText("");
+        qtyField.setText("");
+        categoryField.setText("");
     }
 }
