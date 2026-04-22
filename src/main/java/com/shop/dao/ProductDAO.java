@@ -11,6 +11,7 @@ public class ProductDAO {
 
     // ADD PRODUCT
     public static void addProduct(Product p) {
+
         String sql = "INSERT INTO products(name, price, quantity, category) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.getConnection();
@@ -39,14 +40,13 @@ public class ProductDAO {
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Product p = new Product(
+                list.add(new Product(
                         rs.getInt("id"),
                         rs.getString("name"),
                         rs.getDouble("price"),
                         rs.getInt("quantity"),
                         rs.getString("category")
-                );
-                list.add(p);
+                ));
             }
 
         } catch (Exception e) {
@@ -58,6 +58,7 @@ public class ProductDAO {
 
     // UPDATE PRODUCT
     public static void updateProduct(Product p) {
+
         String sql = "UPDATE products SET name=?, price=?, quantity=?, category=? WHERE id=?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -78,6 +79,7 @@ public class ProductDAO {
 
     // DELETE PRODUCT
     public static void deleteProduct(int id) {
+
         String sql = "DELETE FROM products WHERE id=?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -91,7 +93,7 @@ public class ProductDAO {
         }
     }
 
-    // SEARCH
+    // SEARCH PRODUCT
     public static List<Product> searchProductByName(String name) {
 
         List<Product> list = new ArrayList<>();
@@ -101,6 +103,35 @@ public class ProductDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, "%" + name + "%");
+
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                list.add(new Product(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getDouble("price"),
+                        rs.getInt("quantity"),
+                        rs.getString("category")
+                ));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+    public static List<Product> searchProductByCategory(String category) {
+
+        List<Product> list = new ArrayList<>();
+        String sql = "SELECT * FROM products WHERE category LIKE ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + category + "%");
+
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -120,23 +151,27 @@ public class ProductDAO {
         return list;
     }
 
-    // CATEGORY STOCK
-    public static void getStockByCategory(String category) {
+    // ✅ FIXED: CATEGORY STOCK (NOW RETURNS VALUE)
+    public static int getStockByCategory(String category) {
 
         String sql = "SELECT SUM(quantity) FROM products WHERE category=?";
+        int totalStock = 0;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, category);
+
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                System.out.println("Total stock in " + category + ": " + rs.getInt(1));
+                totalStock = rs.getInt(1);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return totalStock;
     }
 }
