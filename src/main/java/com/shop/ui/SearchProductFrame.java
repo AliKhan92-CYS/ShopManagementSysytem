@@ -1,7 +1,7 @@
 package com.shop.ui;
 
-import com.shop.dao.ProductDAO;
 import com.shop.model.Product;
+import com.shop.service.ProductService;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,6 +14,8 @@ public class SearchProductFrame extends JFrame {
     private JTable table;
     private DefaultTableModel model;
 
+    private final ProductService service = new ProductService();
+
     public SearchProductFrame() {
 
         setTitle("Search Product");
@@ -22,7 +24,7 @@ public class SearchProductFrame extends JFrame {
         setLayout(new BorderLayout());
 
         // ================= TOP PANEL =================
-        JPanel topPanel = new JPanel();
+        JPanel topPanel = new JPanel(new FlowLayout());
 
         searchField = new JTextField(20);
         JButton searchBtn = new JButton("Search");
@@ -34,14 +36,11 @@ public class SearchProductFrame extends JFrame {
         add(topPanel, BorderLayout.NORTH);
 
         // ================= TABLE =================
-        model = new DefaultTableModel();
-        table = new JTable(model);
+        model = new DefaultTableModel(
+                new String[]{"ID", "Name", "Price", "Qty", "Category"}, 0
+        );
 
-        model.addColumn("ID");
-        model.addColumn("Name");
-        model.addColumn("Price");
-        model.addColumn("Qty");
-        model.addColumn("Category");
+        table = new JTable(model);
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -61,15 +60,15 @@ public class SearchProductFrame extends JFrame {
             return;
         }
 
-        // Try name search first
-        List<Product> list = ProductDAO.searchProductByName(keyword);
+        // Try search by name
+        List<Product> list = service.searchByName(keyword);
 
-        // If empty, try category search
+        // fallback to category search
         if (list.isEmpty()) {
-            list = ProductDAO.searchProductByCategory(keyword);
+            list = service.searchByCategory(keyword);
         }
 
-        // Clear table
+        // clear table
         model.setRowCount(0);
 
         if (list.isEmpty()) {
@@ -77,7 +76,6 @@ public class SearchProductFrame extends JFrame {
             return;
         }
 
-        // Fill table
         for (Product p : list) {
             model.addRow(new Object[]{
                     p.getId(),

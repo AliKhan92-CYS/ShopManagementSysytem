@@ -1,7 +1,7 @@
 package com.shop.menu;
 
-import com.shop.dao.ProductDAO;
 import com.shop.model.Product;
+import com.shop.service.ProductService;
 
 import java.util.List;
 import java.util.Scanner;
@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class MainMenu {
 
     static Scanner sc = new Scanner(System.in);
+    static ProductService service = new ProductService();
 
     public static void main(String[] args) {
 
@@ -42,7 +43,7 @@ public class MainMenu {
                 case 5 -> searchMenu();
                 case 6 -> checkStock();
                 case 7 -> {
-                    System.out.println("👋 Exiting system...");
+                    System.out.println("👋 Exiting...");
                     return;
                 }
                 default -> System.out.println("Invalid choice");
@@ -50,7 +51,7 @@ public class MainMenu {
         }
     }
 
-    // ================= ADD PRODUCT =================
+    // ================= ADD =================
     static void addProduct() {
 
         System.out.print("Name: ");
@@ -65,15 +66,20 @@ public class MainMenu {
         System.out.print("Category: ");
         String cat = sc.nextLine();
 
-        ProductDAO.addProduct(new Product(name, price, qty, cat));
+        boolean success = service.addProduct(
+                new Product(name, price, qty, cat)
+        );
 
-        System.out.println("✔ Product Added Successfully");
+        if (success)
+            System.out.println("✔ Product Added");
+        else
+            System.out.println("❌ Invalid input");
     }
 
     // ================= VIEW =================
     static void viewProducts() {
 
-        List<Product> list = ProductDAO.getAllProducts();
+        List<Product> list = service.getAllProducts();
 
         if (list.isEmpty()) {
             System.out.println("No products found");
@@ -107,9 +113,11 @@ public class MainMenu {
         System.out.print("Category: ");
         String cat = sc.nextLine();
 
-        ProductDAO.updateProduct(new Product(id, name, price, qty, cat));
+        boolean success = service.updateProduct(
+                new Product(id, name, price, qty, cat)
+        );
 
-        System.out.println("✔ Updated Successfully");
+        System.out.println(success ? "✔ Updated" : "❌ Failed");
     }
 
     // ================= DELETE =================
@@ -118,9 +126,9 @@ public class MainMenu {
         System.out.print("ID: ");
         int id = Integer.parseInt(sc.nextLine());
 
-        ProductDAO.deleteProduct(id);
+        boolean success = service.deleteProduct(id);
 
-        System.out.println("✔ Deleted Successfully");
+        System.out.println(success ? "✔ Deleted" : "❌ Failed");
     }
 
     // ================= SEARCH MENU =================
@@ -144,7 +152,6 @@ public class MainMenu {
             }
 
             switch (ch) {
-
                 case 1 -> searchByName();
                 case 2 -> searchByCategory();
                 case 3 -> { return; }
@@ -153,13 +160,13 @@ public class MainMenu {
         }
     }
 
-    // ================= SEARCH BY NAME =================
+    // ================= SEARCH NAME =================
     static void searchByName() {
 
         System.out.print("Enter name: ");
         String name = sc.nextLine();
 
-        List<Product> list = ProductDAO.searchProductByName(name);
+        List<Product> list = service.searchByName(name);
 
         if (list.isEmpty()) {
             System.out.println("❌ No product found");
@@ -171,16 +178,16 @@ public class MainMenu {
         }
     }
 
-    // ================= SEARCH BY CATEGORY =================
+    // ================= SEARCH CATEGORY =================
     static void searchByCategory() {
 
         System.out.print("Enter category: ");
         String cat = sc.nextLine();
 
-        List<Product> list = ProductDAO.searchProductByCategory(cat);
+        List<Product> list = service.searchByCategory(cat);
 
         if (list.isEmpty()) {
-            System.out.println("❌ No products found in this category");
+            System.out.println("❌ No products found");
             return;
         }
 
@@ -197,7 +204,7 @@ public class MainMenu {
         System.out.print("Category: ");
         String cat = sc.nextLine();
 
-        int stock = ProductDAO.getStockByCategory(cat);
+        int stock = service.getStockByCategory(cat);
 
         System.out.println("Total stock in " + cat + ": " + stock);
     }

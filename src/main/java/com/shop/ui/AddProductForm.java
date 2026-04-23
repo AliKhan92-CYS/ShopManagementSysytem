@@ -1,7 +1,7 @@
 package com.shop.ui;
 
-import com.shop.dao.ProductDAO;
 import com.shop.model.Product;
+import com.shop.service.ProductService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +9,7 @@ import java.awt.*;
 public class AddProductForm extends JFrame {
 
     private JTextField nameField, priceField, qtyField, categoryField;
+    private final ProductService service = new ProductService();
 
     public AddProductForm() {
 
@@ -17,7 +18,6 @@ public class AddProductForm extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new GridLayout(5, 2, 10, 10));
 
-        // Fields
         nameField = new JTextField();
         priceField = new JTextField();
         qtyField = new JTextField();
@@ -25,7 +25,6 @@ public class AddProductForm extends JFrame {
 
         JButton addBtn = new JButton("Add Product");
 
-        // Layout
         add(new JLabel("Name:"));
         add(nameField);
 
@@ -41,7 +40,6 @@ public class AddProductForm extends JFrame {
         add(new JLabel());
         add(addBtn);
 
-        // Action
         addBtn.addActionListener(e -> addProduct());
 
         setVisible(true);
@@ -54,38 +52,31 @@ public class AddProductForm extends JFrame {
         String qtyText = qtyField.getText().trim();
         String category = categoryField.getText().trim();
 
-        // ✅ VALIDATION
         if (name.isEmpty() || priceText.isEmpty() || qtyText.isEmpty() || category.isEmpty()) {
             JOptionPane.showMessageDialog(this, "All fields are required!");
             return;
         }
 
-        double price;
-        int qty;
-
         try {
-            price = Double.parseDouble(priceText);
-            qty = Integer.parseInt(qtyText);
+            double price = Double.parseDouble(priceText);
+            int qty = Integer.parseInt(qtyText);
 
-            if (price < 0 || qty < 0) {
-                JOptionPane.showMessageDialog(this, "Price and Quantity must be positive!");
-                return;
+            Product p = new Product(name, price, qty, category);
+
+            boolean success = service.addProduct(p);
+
+            if (success) {
+                JOptionPane.showMessageDialog(this, "✔ Product Added");
+                nameField.setText("");
+                priceField.setText("");
+                qtyField.setText("");
+                categoryField.setText("");
+            } else {
+                JOptionPane.showMessageDialog(this, "❌ Invalid input");
             }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Invalid number format!");
-            return;
         }
-
-        // Save
-        ProductDAO.addProduct(new Product(name, price, qty, category));
-
-        JOptionPane.showMessageDialog(this, "✔ Product Added Successfully");
-
-        // Clear fields
-        nameField.setText("");
-        priceField.setText("");
-        qtyField.setText("");
-        categoryField.setText("");
     }
 }

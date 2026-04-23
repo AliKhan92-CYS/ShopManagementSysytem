@@ -1,7 +1,7 @@
 package com.shop.test;
 
-import com.shop.dao.ProductDAO;
 import com.shop.model.Product;
+import com.shop.service.ProductService;
 
 import java.util.List;
 
@@ -9,16 +9,19 @@ public class TestProduct {
 
     public static void main(String[] args) {
 
+        ProductService service = new ProductService();
+
         // ================= CREATE =================
         Product p1 = new Product("Keyboard", 50.0, 10, "Electronics");
-        ProductDAO.addProduct(p1);
+        service.addProduct(p1);
 
         Product p2 = new Product("Apple", 2.5, 100, "Grocery");
-        ProductDAO.addProduct(p2);
+        service.addProduct(p2);
 
         // ================= READ =================
         System.out.println("\n📦 All Products:");
-        List<Product> list = ProductDAO.getAllProducts();
+
+        List<Product> list = service.getAllProducts();
 
         for (Product p : list) {
             System.out.println(
@@ -31,15 +34,14 @@ public class TestProduct {
         }
 
         // ================= UPDATE =================
-        // (Make sure ID exists in your DB)
         Product updated = new Product(1, "Gaming Keyboard", 80.0, 5, "Electronics");
-        ProductDAO.updateProduct(updated);
+        service.updateProduct(updated);
 
         // ================= DELETE =================
-        // (Be careful: this will remove data)
-        ProductDAO.deleteProduct(2);
+        service.deleteProduct(2);
 
-        // ================= CATEGORY STOCK =================
-        ProductDAO.getStockByCategory("Electronics");
+        // ================= STOCK CHECK =================
+        int stock = service.getStockByCategory("Electronics");
+        System.out.println("\nStock in Electronics: " + stock);
     }
 }

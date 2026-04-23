@@ -2,35 +2,24 @@ package com.shop.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.Statement;
 
 public class DBConnection {
 
-    private static final String URL = "jdbc:sqlite:shop.db";
+    private static Connection conn;
 
     public static Connection getConnection() {
 
         try {
-            Connection conn = DriverManager.getConnection(URL);
+            if (conn == null || conn.isClosed()) {
 
-            // Create table automatically if not exists
-            Statement stmt = conn.createStatement();
-
-            String sql = "CREATE TABLE IF NOT EXISTS products (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "name TEXT," +
-                    "price REAL," +
-                    "quantity INTEGER," +
-                    "category TEXT" +
-                    ")";
-
-            stmt.execute(sql);
-
-            return conn;
+                String url = "jdbc:sqlite:" + System.getProperty("user.dir") + "/shop.db";
+                conn = DriverManager.getConnection(url);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+
+        return conn;
     }
 }

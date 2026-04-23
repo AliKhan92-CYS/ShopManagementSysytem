@@ -9,8 +9,7 @@ import java.util.List;
 
 public class ProductDAO {
 
-    // ADD PRODUCT
-    public static void addProduct(Product p) {
+    public boolean addProduct(Product p) {
 
         String sql = "INSERT INTO products(name, price, quantity, category) VALUES (?, ?, ?, ?)";
 
@@ -22,15 +21,16 @@ public class ProductDAO {
             stmt.setInt(3, p.getQuantity());
             stmt.setString(4, p.getCategory());
 
-            stmt.executeUpdate();
+            return stmt.executeUpdate() > 0;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return false;
     }
 
-    // GET ALL PRODUCTS
-    public static List<Product> getAllProducts() {
+    public List<Product> getAllProducts() {
 
         List<Product> list = new ArrayList<>();
         String sql = "SELECT * FROM products";
@@ -56,8 +56,7 @@ public class ProductDAO {
         return list;
     }
 
-    // UPDATE PRODUCT
-    public static void updateProduct(Product p) {
+    public boolean updateProduct(Product p) {
 
         String sql = "UPDATE products SET name=?, price=?, quantity=?, category=? WHERE id=?";
 
@@ -70,15 +69,16 @@ public class ProductDAO {
             stmt.setString(4, p.getCategory());
             stmt.setInt(5, p.getId());
 
-            stmt.executeUpdate();
+            return stmt.executeUpdate() > 0;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return false;
     }
 
-    // DELETE PRODUCT
-    public static void deleteProduct(int id) {
+    public boolean deleteProduct(int id) {
 
         String sql = "DELETE FROM products WHERE id=?";
 
@@ -86,17 +86,19 @@ public class ProductDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
-            stmt.executeUpdate();
+            return stmt.executeUpdate() > 0;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return false;
     }
 
-    // SEARCH PRODUCT
-    public static List<Product> searchProductByName(String name) {
+    public List<Product> searchByName(String name) {
 
         List<Product> list = new ArrayList<>();
+
         String sql = "SELECT * FROM products WHERE name LIKE ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -122,9 +124,11 @@ public class ProductDAO {
 
         return list;
     }
-    public static List<Product> searchProductByCategory(String category) {
+
+    public List<Product> searchByCategory(String category) {
 
         List<Product> list = new ArrayList<>();
+
         String sql = "SELECT * FROM products WHERE category LIKE ?";
 
         try (Connection conn = DBConnection.getConnection();
@@ -149,29 +153,5 @@ public class ProductDAO {
         }
 
         return list;
-    }
-
-    // ✅ FIXED: CATEGORY STOCK (NOW RETURNS VALUE)
-    public static int getStockByCategory(String category) {
-
-        String sql = "SELECT SUM(quantity) FROM products WHERE category=?";
-        int totalStock = 0;
-
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, category);
-
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                totalStock = rs.getInt(1);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return totalStock;
     }
 }
