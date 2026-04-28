@@ -1,52 +1,78 @@
 package com.shop.ui;
 
 import com.formdev.flatlaf.FlatLightLaf;
+import com.shop.model.User;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class MainFrame extends JFrame {
 
-    public MainFrame() {
+    private JPanel contentPanel;
+    private final User user;
 
-        // Apply FlatLaf theme
+    public MainFrame(User user) {
+
+        this.user = user;
+
         FlatLightLaf.setup();
 
-        setTitle("Shop Management System");
-        setSize(600, 400);
+        setTitle("Shop System");
+        setSize(1000, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setLayout(new GridLayout(3, 1, 10, 10));
+        setLayout(new BorderLayout());
 
-        JButton addBtn = new JButton("Add Product");
-        JButton viewBtn = new JButton("View Products");
-        JButton searchBtn = new JButton("Search Product");
+        // ================= HEADER =================
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(Color.WHITE);
+        header.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
 
-        JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
+        JLabel title = new JLabel("Shop Management System");
+        title.setFont(new Font("Arial", Font.BOLD, 18));
 
-        panel.add(addBtn);
-        panel.add(viewBtn);
-        panel.add(searchBtn);
+        JLabel userInfo = new JLabel("User: " + user.getUsername() + " (" + user.getRole() + ")");
+        userInfo.setForeground(Color.GRAY);
 
-        add(panel);
-        // ================= FIXED ACTIONS =================
+        header.add(title, BorderLayout.WEST);
+        header.add(userInfo, BorderLayout.EAST);
 
-        addBtn.addActionListener(e -> {
-            new AddProductForm().setVisible(true);
-        });
+        add(header, BorderLayout.NORTH);
 
-        viewBtn.addActionListener(e -> {
-            new ViewProductsFrame().setVisible(true);
-        });
+        // ================= SIDEBAR =================
+        SidebarPanel sidebar = new SidebarPanel(user, this::switchPanel);
+        add(sidebar, BorderLayout.WEST);
 
-        searchBtn.addActionListener(e -> {
-            new SearchProductFrame().setVisible(true); // ❗ FIXED missing action
-        });
+        // ================= CONTENT =================
+        contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(Color.WHITE);
+        add(contentPanel, BorderLayout.CENTER);
+
+        // ================= DEFAULT =================
+        switchPanel("Dashboard");
 
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        new MainFrame();
+    // ================= PANEL SWITCH =================
+    private void switchPanel(String name) {
+
+        contentPanel.removeAll();
+
+        switch (name) {
+
+            case "Dashboard" -> contentPanel.add(new DashboardPanel(user));
+
+            case "Products" -> contentPanel.add(new ProductPanel(user));
+
+            case "Manage Users" -> new ManageUsersFrame(user);
+
+            default -> contentPanel.add(
+                    new JLabel("Coming Soon...", SwingConstants.CENTER)
+            );
+        }
+
+        contentPanel.revalidate();
+        contentPanel.repaint();
     }
 }

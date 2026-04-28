@@ -21,8 +21,7 @@ public class MainMenu {
             System.out.println("3. Update Product");
             System.out.println("4. Delete Product");
             System.out.println("5. Search Product");
-            System.out.println("6. Check Stock by Category");
-            System.out.println("7. Exit");
+            System.out.println("6. Exit");
 
             System.out.print("Enter choice: ");
 
@@ -41,8 +40,7 @@ public class MainMenu {
                 case 3 -> updateProduct();
                 case 4 -> deleteProduct();
                 case 5 -> searchMenu();
-                case 6 -> checkStock();
-                case 7 -> {
+                case 6 -> {
                     System.out.println("👋 Exiting...");
                     return;
                 }
@@ -54,26 +52,28 @@ public class MainMenu {
     // ================= ADD =================
     static void addProduct() {
 
-        System.out.print("Name: ");
-        String name = sc.nextLine();
+        try {
+            System.out.print("Name: ");
+            String name = sc.nextLine();
 
-        System.out.print("Price: ");
-        double price = Double.parseDouble(sc.nextLine());
+            System.out.print("Price: ");
+            double price = Double.parseDouble(sc.nextLine());
 
-        System.out.print("Quantity: ");
-        int qty = Integer.parseInt(sc.nextLine());
+            System.out.print("Quantity: ");
+            int qty = Integer.parseInt(sc.nextLine());
 
-        System.out.print("Category: ");
-        String cat = sc.nextLine();
+            System.out.print("Category: ");
+            String cat = sc.nextLine();
 
-        boolean success = service.addProduct(
-                new Product(name, price, qty, cat)
-        );
+            boolean success = service.addProduct(
+                    new Product(name, price, qty, cat)
+            );
 
-        if (success)
-            System.out.println("✔ Product Added");
-        else
-            System.out.println("❌ Invalid input");
+            System.out.println(success ? "✔ Product Added" : "❌ Invalid input");
+
+        } catch (Exception e) {
+            System.out.println("❌ Invalid input format!");
+        }
     }
 
     // ================= VIEW =================
@@ -98,37 +98,47 @@ public class MainMenu {
     // ================= UPDATE =================
     static void updateProduct() {
 
-        System.out.print("ID: ");
-        int id = Integer.parseInt(sc.nextLine());
+        try {
+            System.out.print("ID: ");
+            int id = Integer.parseInt(sc.nextLine());
 
-        System.out.print("New Name: ");
-        String name = sc.nextLine();
+            System.out.print("New Name: ");
+            String name = sc.nextLine();
 
-        System.out.print("Price: ");
-        double price = Double.parseDouble(sc.nextLine());
+            System.out.print("Price: ");
+            double price = Double.parseDouble(sc.nextLine());
 
-        System.out.print("Qty: ");
-        int qty = Integer.parseInt(sc.nextLine());
+            System.out.print("Qty: ");
+            int qty = Integer.parseInt(sc.nextLine());
 
-        System.out.print("Category: ");
-        String cat = sc.nextLine();
+            System.out.print("Category: ");
+            String cat = sc.nextLine();
 
-        boolean success = service.updateProduct(
-                new Product(id, name, price, qty, cat)
-        );
+            boolean success = service.updateProduct(
+                    new Product(id, name, price, qty, cat)
+            );
 
-        System.out.println(success ? "✔ Updated" : "❌ Failed");
+            System.out.println(success ? "✔ Updated" : "❌ Failed");
+
+        } catch (Exception e) {
+            System.out.println("❌ Invalid input format!");
+        }
     }
 
     // ================= DELETE =================
     static void deleteProduct() {
 
-        System.out.print("ID: ");
-        int id = Integer.parseInt(sc.nextLine());
+        try {
+            System.out.print("ID: ");
+            int id = Integer.parseInt(sc.nextLine());
 
-        boolean success = service.deleteProduct(id);
+            boolean success = service.deleteProduct(id);
 
-        System.out.println(success ? "✔ Deleted" : "❌ Failed");
+            System.out.println(success ? "✔ Deleted" : "❌ Failed");
+
+        } catch (Exception e) {
+            System.out.println("❌ Invalid ID!");
+        }
     }
 
     // ================= SEARCH MENU =================
@@ -166,7 +176,7 @@ public class MainMenu {
         System.out.print("Enter name: ");
         String name = sc.nextLine();
 
-        List<Product> list = service.searchByName(name);
+        List<Product> list = service.searchProductByName(name);
 
         if (list.isEmpty()) {
             System.out.println("❌ No product found");
@@ -184,7 +194,7 @@ public class MainMenu {
         System.out.print("Enter category: ");
         String cat = sc.nextLine();
 
-        List<Product> list = service.searchByCategory(cat);
+        List<Product> list = service.searchProductByCategory(cat);
 
         if (list.isEmpty()) {
             System.out.println("❌ No products found");
@@ -196,16 +206,5 @@ public class MainMenu {
                     p.getName() + " | " +
                     p.getCategory());
         }
-    }
-
-    // ================= STOCK =================
-    static void checkStock() {
-
-        System.out.print("Category: ");
-        String cat = sc.nextLine();
-
-        int stock = service.getStockByCategory(cat);
-
-        System.out.println("Total stock in " + cat + ": " + stock);
     }
 }
