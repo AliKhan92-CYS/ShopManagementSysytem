@@ -27,7 +27,7 @@ public class ProductPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
         setBackground(Color.WHITE);
 
-        // ================= TOP PANEL (SEARCH) =================
+        // TOP PANEL (SEARCH)
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         top.setOpaque(false);
 
@@ -42,7 +42,7 @@ public class ProductPanel extends JPanel {
 
         add(top, BorderLayout.NORTH);
 
-        // ================= TABLE =================
+        // TABLE
         model = new DefaultTableModel(
                 new String[]{"ID", "Name", "Price", "Qty", "Category"}, 0
         ) {
@@ -56,7 +56,7 @@ public class ProductPanel extends JPanel {
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // ================= BUTTONS =================
+        //  BUTTONS
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         bottom.setOpaque(false);
 
@@ -70,13 +70,13 @@ public class ProductPanel extends JPanel {
 
         add(bottom, BorderLayout.SOUTH);
 
-        // ================= ROLE CONTROL =================
+        //  ROLE CONTROL
         if (!user.isAdmin()) {
             editBtn.setEnabled(false);
             deleteBtn.setEnabled(false);
         }
 
-        // ================= ACTIONS =================
+        // ACTIONS
         addBtn.addActionListener(e -> addProduct());
         editBtn.addActionListener(e -> editProduct());
         deleteBtn.addActionListener(e -> deleteProduct());
@@ -86,13 +86,13 @@ public class ProductPanel extends JPanel {
             loadProducts();
         });
 
-        // 🔥 ENTER KEY SUPPORT
+        //  ENTER KEY SUPPORT
         searchField.addActionListener(e -> searchProduct());
 
         loadProducts();
     }
 
-    // ================= LOAD =================
+    //  LOAD
     private void loadProducts() {
 
         model.setRowCount(0);
@@ -110,7 +110,7 @@ public class ProductPanel extends JPanel {
         }
     }
 
-    // ================= SEARCH =================
+    // SEARCH
     private void searchProduct() {
 
         String keyword = searchField.getText().trim().toLowerCase();
@@ -148,7 +148,7 @@ public class ProductPanel extends JPanel {
         }
     }
 
-    // ================= ADD =================
+    // ADD
     private void addProduct() {
 
         JTextField name = new JTextField();
@@ -189,7 +189,7 @@ public class ProductPanel extends JPanel {
         }
     }
 
-    // ================= EDIT =================
+    //  EDIT
     private void editProduct() {
 
         if (!user.isAdmin()) {
@@ -241,7 +241,7 @@ public class ProductPanel extends JPanel {
         }
     }
 
-    // ================= DELETE =================
+    // DELETE
     private void deleteProduct() {
 
         if (!user.isAdmin()) {

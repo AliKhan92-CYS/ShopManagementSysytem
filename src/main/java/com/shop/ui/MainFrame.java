@@ -23,7 +23,7 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // ================= HEADER =================
+        //  HEADER
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(Color.WHITE);
         header.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
@@ -39,22 +39,22 @@ public class MainFrame extends JFrame {
 
         add(header, BorderLayout.NORTH);
 
-        // ================= SIDEBAR =================
+        // SIDEBAR
         SidebarPanel sidebar = new SidebarPanel(user, this::switchPanel);
         add(sidebar, BorderLayout.WEST);
 
-        // ================= CONTENT =================
+        // CONTENT
         contentPanel = new JPanel(new BorderLayout());
         contentPanel.setBackground(Color.WHITE);
         add(contentPanel, BorderLayout.CENTER);
 
-        // ================= DEFAULT =================
+        //  DEFAULT
         switchPanel("Dashboard");
 
         setVisible(true);
     }
 
-    // ================= PANEL SWITCH =================
+    // PANEL SWITCH
     private void switchPanel(String name) {
 
         contentPanel.removeAll();
@@ -66,6 +66,13 @@ public class MainFrame extends JFrame {
             case "Products" -> contentPanel.add(new ProductPanel(user));
 
             case "Manage Users" -> new ManageUsersFrame(user);
+
+            // ================= NEW MODULES =================
+            case "Customers" -> contentPanel.add(new CustomerPanel(user));
+
+            case "Sales" -> contentPanel.add(new SalesPanel(user));
+
+            case "Reports" -> contentPanel.add(new ReportPanel());
 
             default -> contentPanel.add(
                     new JLabel("Coming Soon...", SwingConstants.CENTER)

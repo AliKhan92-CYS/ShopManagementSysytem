@@ -33,7 +33,7 @@ public class ManageUsersFrame extends JFrame {
 
         add(main);
 
-        // ================= TOP (SEARCH) =================
+        // TOP (SEARCH)
         JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 5));
         top.setOpaque(false);
 
@@ -48,7 +48,7 @@ public class ManageUsersFrame extends JFrame {
 
         main.add(top, BorderLayout.NORTH);
 
-        // ================= TABLE =================
+        // TABLE
         model = new DefaultTableModel(
                 new String[]{"ID", "Username", "Role"}, 0
         ) {
@@ -62,7 +62,7 @@ public class ManageUsersFrame extends JFrame {
 
         main.add(new JScrollPane(table), BorderLayout.CENTER);
 
-        // ================= BUTTONS =================
+        //  BUTTONS
         JPanel bottom = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
         bottom.setOpaque(false);
 
@@ -91,7 +91,7 @@ public class ManageUsersFrame extends JFrame {
         setVisible(true);
     }
 
-    // ================= LOAD =================
+    // LOAD
     private void loadUsers() {
 
         model.setRowCount(0);
@@ -107,7 +107,7 @@ public class ManageUsersFrame extends JFrame {
         }
     }
 
-    // ================= SEARCH =================
+    //  SEARCH
     private void searchUser() {
 
         String keyword = searchField.getText().trim().toLowerCase();
@@ -143,7 +143,7 @@ public class ManageUsersFrame extends JFrame {
         }
     }
 
-    // ================= ADD =================
+    //  ADD
     private void addUser() {
 
         JTextField usernameField = new JTextField();
@@ -182,7 +182,7 @@ public class ManageUsersFrame extends JFrame {
         }
     }
 
-    // ================= DELETE =================
+    // DELETE
     private void deleteUser() {
 
         int row = table.getSelectedRow();
@@ -196,13 +196,13 @@ public class ManageUsersFrame extends JFrame {
         String username = model.getValueAt(row, 1).toString();
         String role = model.getValueAt(row, 2).toString();
 
-        // 🔒 prevent self delete
+        // prevent self delete
         if (username.equalsIgnoreCase(currentUser.getUsername())) {
             JOptionPane.showMessageDialog(this, "You cannot delete your own account!");
             return;
         }
 
-        // 🔒 prevent deleting last admin
+        //  prevent deleting last admin
         if (role.equalsIgnoreCase("admin")) {
             long adminCount = dao.getAllUsers().stream()
                     .filter(u -> u.getRole().equalsIgnoreCase("admin"))

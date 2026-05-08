@@ -11,14 +11,14 @@ public class TestProduct {
 
         ProductService service = new ProductService();
 
-        // ================= CREATE =================
+        //CREATE
         Product p1 = new Product("Keyboard", 50.0, 10, "Electronics");
         Product p2 = new Product("Apple", 2.5, 100, "Grocery");
 
         service.addProduct(p1);
         service.addProduct(p2);
 
-        // ================= READ =================
+        // READ
         System.out.println("\n📦 All Products:");
 
         List<Product> list = service.getAllProducts();
@@ -33,7 +33,7 @@ public class TestProduct {
             );
         }
 
-        // ================= UPDATE =================
+        // UPDATE
         System.out.println("\n🔄 Updating product with ID = 1");
 
         Product updated = new Product(1, "Gaming Keyboard", 80.0, 5, "Electronics");
@@ -41,14 +41,14 @@ public class TestProduct {
 
         System.out.println(updatedResult ? "✔ Update Success" : "❌ Update Failed");
 
-        // ================= DELETE =================
+        // DELETE
         System.out.println("\n🗑 Deleting product with ID = 2");
 
         boolean deleteResult = service.deleteProduct(2);
 
         System.out.println(deleteResult ? "✔ Delete Success" : "❌ Delete Failed");
 
-        // ================= SEARCH =================
+        // SEARCH
         System.out.println("\n🔍 Search by Name: 'Keyboard'");
 
         List<Product> searchList = service.searchProductByName("Keyboard");

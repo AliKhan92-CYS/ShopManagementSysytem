@@ -19,7 +19,6 @@ public class User {
     public String getPassword() { return password; }
     public String getRole() { return role; }
 
-    // ✅ FIXED (IMPORTANT)
     public boolean isAdmin() {
         return role != null && role.equalsIgnoreCase("admin");
     }

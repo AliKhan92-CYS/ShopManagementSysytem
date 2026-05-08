@@ -1,12 +1,13 @@
 package com.shop.ui;
 
+import com.shop.dao.SaleDAO;
 import com.shop.model.Product;
 import com.shop.model.User;
 import com.shop.service.ProductService;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
 import javax.swing.*;
@@ -19,11 +20,9 @@ public class DashboardPanel extends JPanel {
 
     private final ProductService service = new ProductService();
     private final User user;
-
     private JPanel centerPanel;
 
     public DashboardPanel(User user) {
-
         this.user = user;
 
         setLayout(new BorderLayout(15, 15));
@@ -34,7 +33,7 @@ public class DashboardPanel extends JPanel {
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
 
-        JLabel welcome = new JLabel("Welcome, " + user.getUsername());
+        JLabel welcome = new JLabel("Dashboard");
         welcome.setFont(new Font("Arial", Font.BOLD, 20));
 
         JButton refreshBtn = new JButton("Refresh");
@@ -47,47 +46,39 @@ public class DashboardPanel extends JPanel {
         // ================= CENTER =================
         centerPanel = new JPanel(new GridLayout(1, 2, 15, 15));
         centerPanel.setOpaque(false);
-
         add(centerPanel, BorderLayout.CENTER);
 
         // ================= CARDS =================
-        JPanel cards = new JPanel(new GridLayout(1, 2, 15, 15));
+        JPanel cards = new JPanel(new GridLayout(1, 3, 15, 15));
         cards.setOpaque(false);
 
         cards.add(createCard("Total Products", getTotalProducts()));
         cards.add(createCard("Total Quantity", getTotalQuantity()));
+        cards.add(createCard("Sales (Coming)", 0));
 
         add(cards, BorderLayout.SOUTH);
 
-        // Load content
         loadDashboard();
 
-        refreshBtn.addActionListener(e -> refreshDashboard());
+        refreshBtn.addActionListener(e -> loadDashboard());
     }
 
-    // ================= LOAD =================
+    // ================= LOAD DASHBOARD =================
     private void loadDashboard() {
-
         centerPanel.removeAll();
 
-        // LEFT → actual chart
+        // LEFT → product category chart
         centerPanel.add(createCategoryChart());
 
-        // RIGHT → placeholder for future features
-        centerPanel.add(createPlaceholderPanel());
+        // RIGHT → sales by date chart
+        centerPanel.add(createSalesChart());
 
         refreshUI();
     }
 
-    private void refreshDashboard() {
-        loadDashboard();
-    }
-
     // ================= CATEGORY CHART =================
     private ChartPanel createCategoryChart() {
-
         List<Product> list = service.getAllProducts();
-
         Map<String, Integer> categoryMap = new HashMap<>();
 
         for (Product p : list) {
@@ -98,7 +89,6 @@ public class DashboardPanel extends JPanel {
         }
 
         DefaultPieDataset dataset = new DefaultPieDataset();
-
         for (String key : categoryMap.keySet()) {
             dataset.setValue(key, categoryMap.get(key));
         }
@@ -114,25 +104,30 @@ public class DashboardPanel extends JPanel {
         return new ChartPanel(chart);
     }
 
-    // ================= PLACEHOLDER =================
-    private JPanel createPlaceholderPanel() {
+    // ================= SALES CHART =================
+    private ChartPanel createSalesChart() {
+        SaleDAO saleDAO = new SaleDAO();
+        List<Object[]> data = saleDAO.getSalesByDate();
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(new Color(245, 247, 250));
-        panel.setBorder(BorderFactory.createTitledBorder("Future Analytics"));
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        for (Object[] row : data) {
+            String date = (String) row[0];
+            double total = (double) row[1];
+            dataset.addValue(total, "Sales", date);
+        }
 
-        JLabel label = new JLabel("Charts coming soon...");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setForeground(Color.GRAY);
+        JFreeChart chart = ChartFactory.createLineChart(
+                "Sales Report",
+                "Date",
+                "Revenue",
+                dataset
+        );
 
-        panel.add(label, BorderLayout.CENTER);
-
-        return panel;
+        return new ChartPanel(chart);
     }
 
     // ================= CARD =================
     private JPanel createCard(String title, int value) {
-
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(new Color(245, 247, 250));
         card.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));

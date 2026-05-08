@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class UserDAO {
 
-    // ================= LOGIN =================
+    // LOGIN
     public User login(String username, String password) {
 
         String sql = "SELECT * FROM users WHERE username=? AND password=?";
@@ -39,7 +39,7 @@ public class UserDAO {
         return null; // login failed
     }
 
-    // ================= ADD USER =================
+    // ADD USER
     public boolean addUser(User u) {
 
         String sql = "INSERT INTO users(username, password, role) VALUES (?, ?, ?)";
@@ -60,7 +60,7 @@ public class UserDAO {
         return false;
     }
 
-    // ================= GET ALL =================
+    // GET ALL
     public List<User> getAllUsers() {
 
         List<User> list = new ArrayList<>();
@@ -86,7 +86,7 @@ public class UserDAO {
         return list;
     }
 
-    // ================= DELETE =================
+    // DELETE
     public boolean deleteUser(int id) {
 
         String sql = "DELETE FROM users WHERE id=?";

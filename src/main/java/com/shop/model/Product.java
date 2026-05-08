@@ -25,6 +25,11 @@ public class Product {
         this.category = category;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     // Getters & Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }

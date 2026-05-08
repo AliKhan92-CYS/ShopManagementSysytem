@@ -19,15 +19,21 @@ public class SidebarPanel extends JPanel {
 
         setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, new Color(220, 220, 220)));
 
-        // ================= NAV BUTTONS =================
+        // NAV BUTTONS
         add(Box.createVerticalStrut(20));
 
+        // Existing buttons
         add(createButton("Dashboard", listener));
         add(createButton("Products", listener));
 
         if (user.isAdmin()) {
             add(createButton("Manage Users", listener));
         }
+
+        // ================= NEW MODULE BUTTONS =================
+        add(createButton("Customers", listener));
+        add(createButton("Sales", listener));
+        add(createButton("Reports", listener));
 
         add(Box.createVerticalGlue());
     }
@@ -47,7 +53,7 @@ public class SidebarPanel extends JPanel {
 
         btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
 
-        // 🔥 Hover effect (light gray)
+        //  Hover effect (light gray)
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btn.setBackground(new Color(240, 240, 240));

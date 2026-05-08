@@ -27,7 +27,7 @@ public class LoginFrame extends JFrame {
         JPanel mainPanel = new JPanel(new GridLayout(1, 2));
         add(mainPanel);
 
-        // ================= LEFT (AVATAR IMAGE) =================
+        // LEFT (AVATAR IMAGE)
         JPanel left = new JPanel(new GridBagLayout());
         left.setBackground(new Color(245, 247, 250));
 
@@ -41,7 +41,7 @@ public class LoginFrame extends JFrame {
         left.add(avatar);
         mainPanel.add(left);
 
-        // ================= RIGHT (FORM) =================
+        //  RIGHT (FORM)
         JPanel right = new JPanel();
         right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
         right.setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
@@ -53,7 +53,7 @@ public class LoginFrame extends JFrame {
         usernameField = new JTextField();
         passwordField = new JPasswordField();
 
-        // ✅ Rounded Borders (kept)
+        // Rounded Borders
         Border roundedBorder = BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(200, 200, 200)),
                 BorderFactory.createEmptyBorder(8, 10, 8, 10)
@@ -68,7 +68,7 @@ public class LoginFrame extends JFrame {
         JButton loginBtn = new JButton("Login");
         loginBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // ✅ Button hover effect (kept)
+        //  Button hover effect
         loginBtn.setBackground(new Color(60, 130, 246));
         loginBtn.setForeground(Color.WHITE);
         loginBtn.setFocusPainted(false);
@@ -83,7 +83,7 @@ public class LoginFrame extends JFrame {
             }
         });
 
-        // ✅ Show Password (kept)
+        //  Show Password
         JCheckBox showPassword = new JCheckBox("Show Password");
         char defaultEcho = passwordField.getEchoChar();
 
@@ -111,7 +111,7 @@ public class LoginFrame extends JFrame {
 
         mainPanel.add(right);
 
-        // ================= ACTION =================
+        // ACTION
         loginBtn.addActionListener(e -> login());
         passwordField.addActionListener(e -> login());
 

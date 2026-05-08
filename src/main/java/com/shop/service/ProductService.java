@@ -30,7 +30,7 @@ public class ProductService {
         return dao.deleteProduct(id);
     }
 
-    // ================= SEARCH =================
+    // SEARCH
     public List<Product> searchProductByName(String name) {
         return dao.searchProductByName(name);
     }

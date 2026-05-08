@@ -49,7 +49,7 @@ public class MainMenu {
         }
     }
 
-    // ================= ADD =================
+    // ADD
     static void addProduct() {
 
         try {
@@ -76,7 +76,7 @@ public class MainMenu {
         }
     }
 
-    // ================= VIEW =================
+    // VIEW
     static void viewProducts() {
 
         List<Product> list = service.getAllProducts();
@@ -95,7 +95,7 @@ public class MainMenu {
         }
     }
 
-    // ================= UPDATE =================
+    // UPDATE
     static void updateProduct() {
 
         try {
@@ -125,7 +125,7 @@ public class MainMenu {
         }
     }
 
-    // ================= DELETE =================
+    // DELETE
     static void deleteProduct() {
 
         try {
@@ -137,11 +137,11 @@ public class MainMenu {
             System.out.println(success ? "✔ Deleted" : "❌ Failed");
 
         } catch (Exception e) {
-            System.out.println("❌ Invalid ID!");
+            System.out.println("! Invalid ID!");
         }
     }
 
-    // ================= SEARCH MENU =================
+    // SEARCH MENU
     static void searchMenu() {
 
         while (true) {
@@ -170,7 +170,7 @@ public class MainMenu {
         }
     }
 
-    // ================= SEARCH NAME =================
+    // SEARCH NAME
     static void searchByName() {
 
         System.out.print("Enter name: ");
@@ -179,7 +179,7 @@ public class MainMenu {
         List<Product> list = service.searchProductByName(name);
 
         if (list.isEmpty()) {
-            System.out.println("❌ No product found");
+            System.out.println("! No product found");
             return;
         }
 
@@ -188,7 +188,7 @@ public class MainMenu {
         }
     }
 
-    // ================= SEARCH CATEGORY =================
+    // SEARCH CATEGORY
     static void searchByCategory() {
 
         System.out.print("Enter category: ");
@@ -197,7 +197,7 @@ public class MainMenu {
         List<Product> list = service.searchProductByCategory(cat);
 
         if (list.isEmpty()) {
-            System.out.println("❌ No products found");
+            System.out.println("! No products found");
             return;
         }
 
