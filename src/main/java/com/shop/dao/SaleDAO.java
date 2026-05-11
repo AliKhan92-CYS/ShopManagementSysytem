@@ -11,7 +11,7 @@ import java.util.List;
 public class SaleDAO {
 
     // ================= CREATE SALE =================
-    public boolean createSale(Sale sale, List<SaleItem> items) {
+    public int createSale(Sale sale, List<SaleItem> items) {
 
         String saleSQL =
                 "INSERT INTO sales(customer_id, total) VALUES (?, ?)";
@@ -68,12 +68,11 @@ public class SaleDAO {
             stockStmt.executeBatch();
 
             conn.commit();
-            return true;
+            return saleId;
 
         } catch (Exception e) {
             e.printStackTrace();
 
-            // 🔥 IMPORTANT FIX: rollback
             try {
                 if (conn != null) conn.rollback();
             } catch (Exception ex) {
@@ -81,10 +80,10 @@ public class SaleDAO {
             }
         }
 
-        return false;
+        return -1;
     }
 
-    // ================= GET SALES =================
+    // ================= GET ALL SALES =================
     public List<Sale> getAllSales() {
 
         List<Sale> list = new ArrayList<>();
@@ -106,7 +105,7 @@ public class SaleDAO {
                         rs.getTimestamp("sale_date")
                 );
 
-                // attach sale items
+                // attach sale items for reporting/billing
                 sale.setSaleItems(getSaleItemsBySaleId(sale.getId()));
 
                 list.add(sale);
@@ -119,7 +118,7 @@ public class SaleDAO {
         return list;
     }
 
-    // ================= GET SALE ITEMS =================
+    // ================= GET SALE ITEMS BY SALE ID =================
     public List<SaleItem> getSaleItemsBySaleId(int saleId) {
 
         List<SaleItem> items = new ArrayList<>();
@@ -146,7 +145,7 @@ public class SaleDAO {
         return items;
     }
 
-    // ================= SALES BY DATE (FOR DASHBOARD) =================
+    // ================= SALES BY DATE (FOR DASHBOARD GRAPHS) =================
     public List<Object[]> getSalesByDate() {
 
         List<Object[]> list = new ArrayList<>();

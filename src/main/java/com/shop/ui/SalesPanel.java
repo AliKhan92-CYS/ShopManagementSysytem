@@ -17,7 +17,7 @@ import java.util.List;
 
 public class SalesPanel extends JPanel {
 
-    private final User user; // logged-in user for role checks
+    private final User user;
 
     private JComboBox<Customer> customerBox;
     private JComboBox<Product> productBox;
@@ -38,68 +38,110 @@ public class SalesPanel extends JPanel {
     private final List<SaleItem> saleItems = new ArrayList<>();
 
     public SalesPanel(User user) {
+
         this.user = user;
 
-        setLayout(new BorderLayout(10,10));
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        setBackground(Color.WHITE);
 
         // ================= TOP =================
-        JPanel top = new JPanel(new GridLayout(2,1));
+        JPanel top = new JPanel(new GridLayout(2, 1, 10, 10));
+        top.setBackground(Color.WHITE);
 
-        JPanel customerPanel = new JPanel();
+        // CUSTOMER PANEL
+        JPanel customerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        customerPanel.setBackground(Color.WHITE);
+
         customerBox = new JComboBox<>();
+        customerBox.setPreferredSize(new Dimension(250, 30));
+
         loadCustomers();
+
         customerPanel.add(new JLabel("Customer:"));
         customerPanel.add(customerBox);
+
         top.add(customerPanel);
 
-        JPanel productPanel = new JPanel();
+        // PRODUCT PANEL
+        JPanel productPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        productPanel.setBackground(Color.WHITE);
+
         productBox = new JComboBox<>();
+        productBox.setPreferredSize(new Dimension(250, 30));
+
         loadProducts();
+
         qtyField = new JTextField(5);
+
         JButton addBtn = new JButton("Add Item");
 
         productPanel.add(new JLabel("Product:"));
         productPanel.add(productBox);
+
         productPanel.add(new JLabel("Qty:"));
         productPanel.add(qtyField);
+
         productPanel.add(addBtn);
+
         top.add(productPanel);
 
         add(top, BorderLayout.NORTH);
 
         // ================= TABLE =================
         model = new DefaultTableModel(
-                new String[]{"Product","Qty","Price","Subtotal"},
+                new String[]{"Product", "Qty", "Price", "Subtotal"},
                 0
-        );
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
         table = new JTable(model);
+        table.setRowHeight(25);
+
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         // ================= BOTTOM =================
         JPanel bottom = new JPanel(new BorderLayout());
-        totalLabel = new JLabel("Total: 0");
+        bottom.setBackground(Color.WHITE);
+
+        totalLabel = new JLabel("Total: Rs. 0.0");
+        totalLabel.setFont(new Font("Arial", Font.BOLD, 18));
+
         JButton billBtn = new JButton("Generate Bill");
+
         bottom.add(totalLabel, BorderLayout.WEST);
         bottom.add(billBtn, BorderLayout.EAST);
+
         add(bottom, BorderLayout.SOUTH);
 
         // ================= ROLE CONTROL =================
-        if(!user.isAdmin()){
+        if (!user.isAdmin()) {
+
             addBtn.setEnabled(false);
             billBtn.setEnabled(false);
+
             productBox.setEnabled(false);
             qtyField.setEnabled(false);
         }
 
         // ================= ACTIONS =================
         addBtn.addActionListener(e -> addItem());
+
         billBtn.addActionListener(e -> generateBill());
     }
 
     // ================= LOAD CUSTOMERS =================
     private void loadCustomers() {
-        List<Customer> customers = customerDAO.getAllCustomers();
+
+        List<Customer> customers =
+                customerDAO.getAllCustomers();
+
         customerBox.removeAllItems();
+
         for (Customer c : customers) {
             customerBox.addItem(c);
         }
@@ -107,8 +149,12 @@ public class SalesPanel extends JPanel {
 
     // ================= LOAD PRODUCTS =================
     private void loadProducts() {
-        List<Product> products = productDAO.getAllProducts();
+
+        List<Product> products =
+                productDAO.getAllProducts();
+
         productBox.removeAllItems();
+
         for (Product p : products) {
             productBox.addItem(p);
         }
@@ -116,52 +162,140 @@ public class SalesPanel extends JPanel {
 
     // ================= ADD ITEM =================
     private void addItem() {
+
         try {
-            Product p = (Product) productBox.getSelectedItem();
-            int qty = Integer.parseInt(qtyField.getText());
 
-            if(qty <= 0){
-                JOptionPane.showMessageDialog(this,"Invalid quantity");
+            Product p =
+                    (Product) productBox.getSelectedItem();
+
+            if (p == null) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No product selected"
+                );
                 return;
             }
-            if(qty > p.getQuantity()){
-                JOptionPane.showMessageDialog(this,"Not enough stock");
+
+            int qty =
+                    Integer.parseInt(qtyField.getText().trim());
+
+            if (qty <= 0) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Invalid quantity"
+                );
+
                 return;
             }
 
-            double subtotal = qty * p.getPrice();
+            if (qty > p.getQuantity()) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Not enough stock"
+                );
+
+                return;
+            }
+
+            double subtotal =
+                    qty * p.getPrice();
+
             total += subtotal;
-            totalLabel.setText("Total: " + total);
 
-            model.addRow(new Object[]{p.getName(), qty, p.getPrice(), subtotal});
+            totalLabel.setText(
+                    "Total: Rs. " + total
+            );
 
-            saleItems.add(new SaleItem(p.getId(), qty, p.getPrice()));
+            model.addRow(new Object[]{
+                    p.getName(),
+                    qty,
+                    p.getPrice(),
+                    subtotal
+            });
 
-        } catch (Exception e){
-            JOptionPane.showMessageDialog(this,"Invalid quantity");
+            saleItems.add(
+                    new SaleItem(
+                            p.getId(),
+                            qty,
+                            p.getPrice()
+                    )
+            );
+
+            qtyField.setText("");
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Invalid quantity"
+            );
         }
     }
 
     // ================= GENERATE BILL =================
     private void generateBill() {
-        if(saleItems.isEmpty()){
-            JOptionPane.showMessageDialog(this,"Add items first");
+
+        if (saleItems.isEmpty()) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Add items first"
+            );
+
             return;
         }
 
-        Customer c = (Customer) customerBox.getSelectedItem();
-        Sale sale = new Sale(c.getId(), total);
+        Customer c =
+                (Customer) customerBox.getSelectedItem();
 
-        boolean success = saleDAO.createSale(sale, saleItems);
+        if (c == null) {
 
-        if(success){
-            JOptionPane.showMessageDialog(this,"Bill Generated Successfully");
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Select customer"
+            );
+
+            return;
+        }
+
+        Sale sale =
+                new Sale(c.getId(), total);
+
+        int saleId =
+                saleDAO.createSale(sale, saleItems);
+
+        if (saleId != -1) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Bill Generated Successfully"
+            );
+
+            new BillFrame(
+                    saleId,
+                    c,
+                    saleItems,
+                    total
+            );
+
             model.setRowCount(0);
+
             saleItems.clear();
+
             total = 0;
-            totalLabel.setText("Total: 0");
+
+            totalLabel.setText("Total: Rs. 0.0");
+
+            loadProducts();
+
         } else {
-            JOptionPane.showMessageDialog(this,"Failed to generate bill");
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Failed to generate bill"
+            );
         }
     }
 }

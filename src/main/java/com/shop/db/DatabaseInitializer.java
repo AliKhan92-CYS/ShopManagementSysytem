@@ -35,12 +35,14 @@ public class DatabaseInitializer {
 
             // ================= CUSTOMERS =================
             stmt.execute("""
-                    CREATE TABLE IF NOT EXISTS customers (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        name TEXT NOT NULL,
-                        email TEXT,
-                        phone TEXT,
-                        address TEXT
+                    String customerTable =
+                            "CREATE TABLE IF NOT EXISTS customers (" +
+                            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "name TEXT NOT NULL," +
+                            "email TEXT," +
+                            "phone TEXT," +
+                            "address TEXT" +
+                            ")";
                     )
                     """);
 
